@@ -1,7 +1,6 @@
 package my.test.oauth2.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,7 +9,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import static my.test.oauth2.configuration.ResourceServerConfiguration.DEMO_RESOURCE_ID;
@@ -34,6 +32,7 @@ public class AutorizationServerConfiguration extends AuthorizationServerConfigur
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
                 .withClient("client_1")
+                .accessTokenValiditySeconds(7200)
                 .resourceIds(DEMO_RESOURCE_ID)
                 .authorizedGrantTypes("client_credentials", "refresh_token")
                 .scopes("select")
@@ -41,6 +40,7 @@ public class AutorizationServerConfiguration extends AuthorizationServerConfigur
                 .secret("{noop}123456")
                 .and()
                 .withClient("client_2")
+                .accessTokenValiditySeconds(7200)
                 .resourceIds(DEMO_RESOURCE_ID)
                 .authorizedGrantTypes("password","refresh_token")
                 .scopes("select")
@@ -49,14 +49,10 @@ public class AutorizationServerConfiguration extends AuthorizationServerConfigur
     }
 
       //not worked, statt with TokenStore Bean
-//    @Override
-//    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-//        endpoints.tokenStore(new RedisTokenStore(redisConnectionFactory))
-//                .authenticationManager(authenticationManager);
-//    }
-
-    @Bean
-    public TokenStore tokenStore(RedisConnectionFactory redisConnectionFactory) {
-        return new RedisTokenStore(redisConnectionFactory);
+    @Override
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        endpoints.tokenStore(new RedisTokenStore(redisConnectionFactory))
+                .authenticationManager(authenticationManager);
     }
+
 }
