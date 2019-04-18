@@ -20,12 +20,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                .and()
-                .requestMatchers().anyRequest()
-                .and()
-                .anonymous()
-                .and()
+        http
                 .authorizeRequests()
                 .antMatchers("/product/**").access("#oauth2.hasScope('select') and hasRole('ROLE_USER')")
                 .antMatchers("/order/**").authenticated();
