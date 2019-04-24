@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TestEndpoints {
-    @PreAuthorize("#oauth2.hasScope('select')")
+//    @PreAuthorize("#oauth2.hasScope('select')")
     @GetMapping("/product/{id}")
     public String getProduct(@PathVariable String id){
         //for debug
@@ -22,5 +22,12 @@ public class TestEndpoints {
         //for debug
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return "order id: " + id;
+    }
+
+    @GetMapping("/anonym/{id}")
+    public String getStringWithoutPermission(@PathVariable String id){
+        //for debug
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return "anonym id: " + id;
     }
 }
